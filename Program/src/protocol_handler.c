@@ -16,13 +16,13 @@ Author: Evan Giese
 
 static void transasction_log(char *msg, uint64_t transaction_sequence_number){
     char log_message[2000];
-    ssp_snprintf(log_message, sizeof(log_message), "%s%llu|%s\n", "transaction:", transaction_sequence_number, msg);
+    ssp_snprintf(log_message, sizeof(log_message), "%s"FMT64"|%s\n", "transaction:", transaction_sequence_number, msg);
     ssp_printf(log_message);
 }
 
 static void build_temperary_file(Request *req, uint32_t size) {
 
-    ssp_snprintf(req->source_file_name, 75, "%s%llu%s", "incomplete_requests/.temp_", req->transaction_sequence_number, ".jpeg");
+    ssp_snprintf(req->source_file_name, 75, "%s"FMT64"%s", "incomplete_requests/.temp_", req->transaction_sequence_number, ".jpeg");
     ssp_printf("haven't received metadata yet, building temperary file %s\n", req->source_file_name);
     req->file = create_temp_file(req->source_file_name, size);
 }
@@ -329,8 +329,7 @@ void process_messages(Request *req, FTP *app) {
 
                 break;
 
-            case CONTINUE_PARTIAL:
-                
+            case CONTINUE_PARTIAL: { 
                 p_cont = (Message_cont_part_request *) message->value;
 
                 uint64_t dest_id = p_cont->destination_id;
@@ -349,7 +348,8 @@ void process_messages(Request *req, FTP *app) {
                 if (error < 0)
                     ssp_printf(error_msg, "continue partial request\n");
                 break;
-    
+            }
+
             default:
                 ssp_printf("message type not recognized\n");
                 break;
@@ -428,7 +428,7 @@ int create_data_burst_packets(char *packet, uint32_t start, File *file, uint32_t
     return 0;
 }
 
-static struct cont_partial_params {
+struct cont_partial_params {
     uint32_t start;
     Response *res;
     Request *req;
@@ -749,7 +749,7 @@ int process_file_request_metadata(Request *req) {
         req->file = create_file(req->destination_file_name, 1);
 
     else if (req->file->is_temp) {
-        ssp_snprintf(temp, 75, "%s%llu%s", "incomplete_requests/.temp_", req->transaction_sequence_number, ".jpeg");
+        ssp_snprintf(temp, 75, "%s"FMT64"%s", "incomplete_requests/.temp_", req->transaction_sequence_number, ".jpeg");
         change_tempfile_to_actual(temp, req->destination_file_name, req->file_size, req->file);
         return 1;
     }

@@ -61,8 +61,6 @@ Author: Evan Giese
     #define ssp_closedir closedir
     #define ssp_lseek lseek
     #define ssp_remove remove
-
-
 #endif
 
 #ifdef RED_FS
@@ -78,7 +76,7 @@ Author: Evan Giese
     #define SSP_O_TRUNC RED_O_TRUNC
     #define SSP_EEXIST RED_EEXIST
     #define SSP_SEEK_SET RED_SEEK_SET
-    #define SSP_SEEK_END SEEK_END
+    #define SSP_SEEK_END RED_SEEK_END
     #define ssp_open red_open
     #define ssp_rename red_rename
     #define ssp_close red_close
@@ -114,6 +112,8 @@ Author: Evan Giese
     #include "stdlib.h"
     #define ssp_atol atol
     #define ssp_atoll atoll
+
+    #define FMT64 "%lu"
 #endif
 
 #ifdef FREE_RTOS_PORT
@@ -127,6 +127,8 @@ Author: Evan Giese
     #include "stdlib.h"
     #define ssp_atol atol
     #define ssp_atoll atoll
+
+    #define FMT64 "%llu"
 #endif
 
 
@@ -140,7 +142,7 @@ void ssp_error(char *msg);
 void ssp_printf(char *stuff, ...);
 void *ssp_alloc(uint32_t u_memb, size_t size);
 void ssp_sendto(Response res);
-void *ssp_thread_create(int stack_size, void * (thread_func)(void *params), void *params);
+void *ssp_thread_create(int stack_size, void* (thread_func)(void *params), void *params);
 int ssp_time_count(void);
 void ssp_error(char *error);
 void ssp_free(void *pointer);
@@ -148,11 +150,11 @@ void ssp_thread_join(void *thread_handle);
 int ssp_mkdir(char *dir_name);
 void *ssp_opendir(char *dir_name);
 int ssp_readdir(void *dir, char *file);
-int get_exit();
-void set_exit();
+int get_exit(void);
+void set_exit(void);
 int ssp_lock_give(void *lock);
 int ssp_lock_take(void *lock);
-void *ssp_lock_create();
+void *ssp_lock_create(void);
 int ssp_lock_destory(void *lock);
 
 void reset_request(Request *req);

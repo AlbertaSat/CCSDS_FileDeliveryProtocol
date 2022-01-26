@@ -25,10 +25,10 @@ void ssp_print_hex(char *stuff, int size){
 }   
 
 
-static int log_fd = -1;
 void log_ftp(char *info, char *stuff){
 
     #ifdef POSIX_PORT
+    static int log_fd = -1;
     time_t current_time;
     char c_time_string[1000];
     current_time = time(NULL);
@@ -57,7 +57,7 @@ void log_ftp(char *info, char *stuff){
     
     if (log_fd < 0) {
 
-        int log_fd = ssp_open("log.txt", SSP_O_RDWR, 0655);
+        log_fd = ssp_open("log.txt", SSP_O_RDWR, 0655);
         if (log_fd == -1){
             log_fd = ssp_open("log.txt", SSP_O_CREAT | SSP_O_RDWR, 0655);
         }
